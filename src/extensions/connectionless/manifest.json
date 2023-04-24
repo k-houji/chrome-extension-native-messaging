@@ -1,0 +1,21 @@
+{
+  "name": "Client Extension Sample Connection Less",
+  "description": "",
+  "version": "1.0",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": [
+        "https://k-houji.github.io/chrome-extension-native-messaging/*"
+      ],
+      "run_at": "document_end",
+      "js": [ "content.js" ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "nativeMessaging"
+  ]
+}
