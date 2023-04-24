@@ -1,0 +1,10 @@
+{
+  "name": "com.client.extension.sample.host",
+  "description": "Client Extension Sample Host",
+  "path": "Host.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://________________________________/",
+    "chrome-extension://________________________________/"
+  ]
+}
