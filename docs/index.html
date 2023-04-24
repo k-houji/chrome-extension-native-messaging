@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function log_ConnectionLess(value) {
+            let now = new Date();
+            let element = document.getElementById('Log_ConnectionLess');
+            element.value += now.toLocaleTimeString() + "\t" + value + "\n";
+            element.scrollTo(0, element.scrollHeight);
+        }
+
+        function log_ConnectionBase(value) {
+            let now = new Date();
+            let element = document.getElementById('Log_ConnectionBase');
+            element.value += now.toLocaleTimeString() + "\t" + value + "\n";
+            element.scrollTo(0, element.scrollHeight);
+        }
+
+        function recv_ConnectionLess(e) {
+            let message = JSON.parse(e.detail);
+            if (message.message) {
+                log_ConnectionLess(message.message);
+            }
+            else {
+                log_ConnectionLess(JSON.stringify(message));
+            }
+        }
+
+        function recv_ConnectionBase(e) {
+            let message = JSON.parse(e.detail);
+            if (message.message) {
+                log_ConnectionBase(message.message);
+            }
+            else {
+                log_ConnectionBase(JSON.stringify(message));
+            }
+        }
+
+        function send_ConnectionLess(message) {
+            log_ConnectionLess(JSON.stringify(message));
+
+            let e = document.createEvent('CustomEvent');
+            e.initCustomEvent('ClientExtensionRequest_ConnectionLess', true, true, JSON.stringify(message));
+            document.dispatchEvent(e);
+        }
+
+        function send_ConnectionBase(message) {
+            if (message.Method === 'Send') {
+                log_ConnectionBase(JSON.stringify(message.Message));
+            }
+            else {
+                log_ConnectionBase(message.Method);
+            }
+
+            let e = document.createEvent('CustomEvent');
+            e.initCustomEvent('ClientExtensionRequest_ConnectionBase', true, true, JSON.stringify(message));
+            document.dispatchEvent(e);
+        }
+
+        function buttonSendMessageConnectionLess() {
+            let text = document.getElementById('SendingMessage_ConnectionLess').value;
+            let message = { Value: text };
+            send_ConnectionLess(message);
+        }
+
+        function buttonOpenConnection() {
+            let message = { Method: 'Open' }
+            send_ConnectionBase(message);
+        }
+
+        function buttonCloseConnection() {
+            let message = { Method: 'Close' }
+            send_ConnectionBase(message);
+        }
+
+        function buttonSendMessageConnectionBase() {
+            let text = document.getElementById('SendingMessage_ConnectionBase').value;
+            let message = { Method: 'Send', Message: { Value: text } };
+            send_ConnectionBase(message);
+        }
+
+        document.addEventListener('ClientExtensionResponse_ConnectionLess', recv_ConnectionLess, false);
+        document.addEventListener('ClientExtensionResponse_ConnectionBase', recv_ConnectionBase, false);
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Connection Less</h1>
+        <div>
+            <span>
+                Version:
+                <input type="text" id="ClientExtensionVersion_ConnectionLess" readonly="readonly" value="" />
+            </span>
+        </div>
+        <br/>
+        <div>
+            <span>
+                <input type="text" id="SendingMessage_ConnectionLess" />
+                <input type="button" value="Send" onclick="buttonSendMessageConnectionLess()" />
+            </span>
+        </div>
+        <br/>
+        <div>
+            <textarea id="Log_ConnectionLess" rows=4 style="width: 100%;"></textarea>
+        </div>
+    <div>
+    <hr/>
+    <div>
+        <h1>Connection Base</h1>
+        <div>
+            <span>
+                Version:
+                <input type="text" id="ClientExtensionVersion_ConnectionBase" readonly="readonly" value="" />
+            </span>
+        </div>
+        <br/>
+        <div>
+            <span>
+                <input type="button" value="Open" onclick="buttonOpenConnection()" />
+                <input type="button" value="Close" onclick="buttonCloseConnection()" />
+            </span>
+        </div>
+        <div>
+            <span>
+                <input type="text" id="SendingMessage_ConnectionBase" />
+                <input type="button" value="Send" onclick="buttonSendMessageConnectionBase()" />
+            </span>
+        </div>
+        <br/>
+        <div>
+            <textarea id="Log_ConnectionBase" rows=4 style="width: 100%;"></textarea>
+        </div>
+    </div>
+</body>
+</html>
